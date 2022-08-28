@@ -11,7 +11,7 @@ exports.up = function (knex) {
     table.boolean("seen_by_user").defaultTo(false);
     // untuk menambahkan custom id pada suatu tabel. misal ketika dibutuhkan untuk esign maka document id yang ditaruh disini guna mempercepat pencarian
     table.string("additional_custom_id");
-    table.timestamps("created_at").defaultTo(knex.fn.now());
+    table.timestamp("created_at").defaultTo(knex.fn.now());
   });
 };
 

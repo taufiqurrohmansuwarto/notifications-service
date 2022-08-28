@@ -8,12 +8,12 @@ require("dotenv").config({
   debug: true,
 });
 
-const username = process.env.DB_USERNAME;
+const user = process.env.DB_USERNAME;
 const password = process.env.DB_PASSWORD;
 const database = process.env.DB_DATABASE;
 
 const connection = {
-  username,
+  user,
   password,
   database,
 };
@@ -33,11 +33,7 @@ module.exports = {
 
   staging: {
     client: "postgresql",
-    connection: {
-      database: "my_db",
-      user: "username",
-      password: "password",
-    },
+    connection,
     pool: {
       min: 2,
       max: 10,
