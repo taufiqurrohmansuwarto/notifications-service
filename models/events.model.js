@@ -1,12 +1,12 @@
-const { Model } = require('objection')
-const knex = require('../knex')
+const { Model } = require("objection");
+const knex = require("../knex_connection");
 
-Model.knex(knex)
+Model.knex(knex);
 
 class Event extends Model {
-    static get tableName() {
-        return 'events'
-    }
+  static get tableName() {
+    return "events";
+  }
 }
 
-module.exports = Event
+module.exports = Event;
