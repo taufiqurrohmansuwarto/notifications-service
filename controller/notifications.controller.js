@@ -28,28 +28,58 @@ module.exports.getNotifications = async (req, res) => {
       return res.status(422).json({ errors: errors.array() });
     }
 
+    // it must be filter by type
     const { pegawai_id: to } = req?.query;
+    const type = req?.query?.type || "esign";
     const page = req?.query?.page || 1;
     const limit = req?.query?.limit || 50;
 
     const notifications = await Notification.query()
       .where("to", to)
       .withGraphFetched("event")
+      .where("event_id", "like", `${type}%`)
       .page(parseInt(page) - 1, limit)
       .orderBy("created_at", "desc");
+
+    const notificationNotSeen = await Notification.query()
+      .where("to", to)
+      .andWhere("seen_by_user", false)
+      .andWhere("event_id", "like", `${type}%`)
+      .count();
 
     const data = {
       meta: {
         page: parseInt(page),
         limit: parseInt(limit),
       },
-      data: notifications.results,
+      data: {
+        results: notifications.results,
+        total: notifications.total,
+        totalNotSeen: notificationNotSeen[0].count,
+      },
     };
 
     res.json(data);
   } catch (error) {
     console.log(error);
     res.boom.badRequest("error");
+  }
+};
+
+module.exports.totalReadFalseNotification = async (req, res) => {
+  try {
+    const { pegawai_id } = req?.query;
+    const type = req?.query?.type || "esign";
+
+    const result = await Notification.query()
+      .count()
+      .where("to", pegawai_id)
+      .andWhere("seen_by_user", false)
+      .andWhere("event_id", "like", `${type}%`);
+    res.json(result);
+  } catch (error) {
+    console.log(error);
+    res.boom.badRequest("error", error);
   }
 };
 

@@ -5,6 +5,11 @@ module.exports.pegawaiRequiredInquery = [
     .isString()
     .notEmpty()
     .withMessage("pegawai_id is required"),
+  query("type")
+    .isString()
+    .notEmpty()
+    .default("esign")
+    .withMessage("type is required"),
 ];
 
 module.exports.bodyInNotifications = [

@@ -1,6 +1,7 @@
-const express = require('express')
-const router = express.Router()
+const express = require("express");
+const { index } = require("../controller/events.controller");
+const router = express.Router();
 
-router.route('/').get().post();
+router.route("/").get(index);
 
 module.exports = router;
