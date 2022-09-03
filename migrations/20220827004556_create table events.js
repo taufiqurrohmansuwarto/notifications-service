@@ -6,7 +6,7 @@ exports.up = function (knex) {
   return knex.schema.createTable("events", (table) => {
     // contoh misal text diiisi comment kemudian text diisi commented on your post
     // sumber https://stackoverflow.com/questions/29437304/notifications-table-design
-    table.integer("id").primary();
+    table.string("id").primary();
     table.string("type");
     table.text("text");
     table.timestamp("created_at").defaultTo(knex.fn.now());
