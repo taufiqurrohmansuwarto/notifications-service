@@ -1,5 +1,7 @@
 const Notification = require("../models/notifications.model");
 const { validationResult } = require("express-validator");
+const { uniqBy, uniq } = require("lodash");
+const { getEmployees } = require("../utils/services");
 
 module.exports.createNotification = async (req, res) => {
   try {
@@ -47,13 +49,27 @@ module.exports.getNotifications = async (req, res) => {
       .andWhere("event_id", "like", `${type}%`)
       .count();
 
+    const fromUser = uniqBy(notifications.results, "from");
+    const toUser = uniqBy(notifications.results, "to");
+
+    const users = [...fromUser, ...toUser];
+
+    const listUsersWithInfo = await getEmployees(users);
+    const notificationsWithUserInfo = notifications?.results?.map((notif) => {
+      return {
+        from_user: listUsersWithInfo?.find((user) => user?.id === notif?.from),
+        to_user: listUsersWithInfo?.find((user) => user?.id === notif?.to),
+        ...notif,
+      };
+    });
+
     const data = {
       meta: {
         page: parseInt(page),
         limit: parseInt(limit),
       },
       data: {
-        results: notifications.results,
+        results: notificationsWithUserInfo,
         total: notifications.total,
         totalNotSeen: notificationNotSeen[0].count,
       },
